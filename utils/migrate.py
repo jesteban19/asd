@@ -1,23 +1,14 @@
 import os
 import aiofiles
-import csv
-from falcon import HTTPInternalServerError
 
 from database import get_db_connection
-from services.MigrationService import MigrationService
 
 
-class CommentMigrationResource:
-    service = MigrationService()
-
-    async def on_post(self, req, resp):
-        try:
-            table_name = "comentarios"
-            csv_file = os.path.join("resources", "testcomentarios.csv")
-            await self.upload_csv_to_db(table_name, csv_file)
-            resp.body = "file testcomentarios.csv was imported to table {}".format(table_name)
-        except Exception as e:
-            raise HTTPInternalServerError(description=str(e))
+class CommentsUtil:
+    async def migrate(self):
+        table_name = "comentarios"
+        csv_file = os.path.join("resources", "testcomentarios.csv")
+        await self.upload_csv_to_db(table_name, csv_file)
 
     async def upload_csv_to_db(self, table_name, csv_file):
         conn = await get_db_connection()
@@ -34,3 +25,9 @@ class CommentMigrationResource:
                                              conn=conn)
             except Exception as e:
                 raise e
+
+
+# executing migrations
+
+comments = CommentsUtil()
+comments.migrate()

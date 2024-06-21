@@ -2,10 +2,10 @@ import asyncpg
 
 async def get_db_connection():
     conn = await asyncpg.connect(
-        user="postgres",
-        password="123",
+        user="devttecnico22",
+        password="Jyuwh%cwe=",
         host="localhost",
-        database="evolta"
+        database="devttecnico22"
     )
     return conn
 

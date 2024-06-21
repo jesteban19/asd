@@ -2,9 +2,11 @@ import os
 import aiofiles
 
 from database import get_db_connection
+from services.MigrationService import MigrationService
 
 
 class CommentsUtil:
+    service = MigrationService()
     async def migrate(self):
         table_name = "comentarios"
         csv_file = os.path.join("resources", "testcomentarios.csv")

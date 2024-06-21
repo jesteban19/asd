@@ -4,9 +4,11 @@ import csv
 from falcon import HTTPInternalServerError
 
 from database import get_db_connection
+from services.MigrationService import MigrationService
 
 
 class ProspectMigrationResource:
+    service = MigrationService()
 
     async def on_post(self, req, resp):
         table_name = "prospectos"
@@ -24,29 +26,12 @@ class ProspectMigrationResource:
             try:
                 async with aiofiles.open(csv_file, mode='r', encoding="utf-8-sig") as file:
                     content = await file.read()
-                    content_with_boom = content.lstrip('\ufeff')
-                    rows = content_with_boom.splitlines()
 
-                    reader = csv.reader(rows, delimiter='|')
-                    batch_size = 500000
-                    batch = []
                     headers = []
                     for i in range(0, 123):
-                        headers.append(f"columna{i+1}")
+                        headers.append(f"columna{i + 1}")
 
-                    placeholders = ', '.join(['$' + str(i + 1) for i in range(len(headers))])
-                    insert_query = f'INSERT INTO {table_name} ({", ".join(headers)}) VALUES ({placeholders})'
-                    for row in reader:
-                        if len(row) == 123:
-                            batch.append(row)
-
-                        if len(batch) >= batch_size:
-                            await conn.executemany(insert_query, batch)
-                            print("batch executing {} rows.".format(str(len(batch))))
-                            batch = []
-                    if batch:
-                        await conn.executemany(insert_query, batch)
-
-
+                    await self.service.build(content=content, batch_size=500000, table_name=table_name, headers=headers,
+                                             conn=conn)
             except Exception as e:
                 raise e

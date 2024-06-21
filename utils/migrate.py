@@ -4,6 +4,7 @@ import aiofiles
 import asyncpg
 import asyncio
 
+
 async def get_db_connection():
     conn = await asyncpg.connect(
         user="devttecnico22",
@@ -21,7 +22,7 @@ async def get_db_session():
 class MigrateTools:
     async def migrate_comments(self):
         table_name = "comentarios"
-        csv_file = os.path.join("resources", "testcomentarios.csv")
+        csv_file = os.path.join("..", "resources", "testcomentarios.csv")
         await self.upload_csv_to_db(table_name, csv_file)
 
     async def upload_csv_to_db(self, table_name, csv_file):
@@ -65,5 +66,6 @@ async def runAll():
         await comments.migrate_comments()
     except Exception as e:
         raise e
+
 
 asyncio.run(runAll())

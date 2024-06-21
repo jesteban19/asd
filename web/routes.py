@@ -1,3 +1,4 @@
+from api.healthcheck.HealthcheckResource import HealthcheckResource
 from api.migrations.CommentMigrationResource import CommentMigrationResource
 from api.migrations.EventMigrationResource import EventMigrationResource
 from api.migrations.AccionMigrationResource import AccionMigrationResource
@@ -15,3 +16,5 @@ def routes(app):
 
     app.add_route('/api/event', EventResource())
     app.add_route('/api/comment', CommentResource())
+
+    app.add_route('/', HealthcheckResource())
